@@ -1,6 +1,16 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+
 admin.initializeApp();
+
+
+
+exports.publishSubjectEvent = functions.pubsub.topic('subject-events').onPublish(message => {
+    const data = message.data ? Buffer.from(message.data, 'base64').toString(): '{"result":"no data"}';
+    const event = JSON.parse(data)
+    return admin.firestore().collection('subject-events').doc(event.id).set(event).then();
+})
+
 
 exports.publishSubjectCreatedEvent = functions.pubsub.topic('created-subject-events').onPublish(message => {
     const data = message.data ? Buffer.from(message.data, 'base64').toString(): '{"result":"no data"}';
@@ -23,7 +33,7 @@ exports.publishSubjectDeletedEvent = functions.pubsub.topic('deleted-subject-eve
 exports.publishSubjectAcceptedEvent = functions.pubsub.topic('accepted-subject-events').onPublish(message => {
     const data = message.data ? Buffer.from(message.data, 'base64').toString(): '{"result":"no data"}';
     const event = JSON.parse(data)
-    return admin.firestore().collection('subject').doc(event.entityId).update({status: event.status, updatedDate: new Date(event._ts)}).then();
+    return admin.firestore().collection('subject').doc(event.entityId).update({status: event.status, scheduleDate: event.scheduleDate, updatedDate: new Date(event._ts)}).then();
 })
 
 exports.publishSubjectRefusedEvent = functions.pubsub.topic('refused-subject-events').onPublish(message => {
@@ -42,4 +52,10 @@ exports.publishSubjectTitleChangedEvent = functions.pubsub.topic('title-changed-
     const data = message.data ? Buffer.from(message.data, 'base64').toString(): '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('subject').doc(event.entityId).update({title: event.title, updatedDate: new Date(event._ts)}).then();
+})
+
+exports.publishSubjectSchedulesChangedEvent = functions.pubsub.topic('schedules-changed-subject-events').onPublish(message => {
+    const data = message.data ? Buffer.from(message.data, 'base64').toString(): '{"result":"no data"}';
+    const event = JSON.parse(data)
+    return admin.firestore().collection('subject').doc(event.entityId).update({schedules: event.schedules.map(s => new Date(s)), updatedDate: new Date(event._ts)}).then();
 })
