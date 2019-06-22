@@ -31,8 +31,8 @@ exports.publishSubjectCreatedEvent = functions.pubsub.topic('created-subject-eve
             title: creatEvent.title,
             status: creatEvent.status,
             creationDate: new Date(creatEvent._ts),
-            schedules = creatEvent.schedules,
-            subjectType = creatEvent.subjectType
+            schedules : creatEvent.schedules,
+            subjectType : creatEvent.subjectType
         }
         if (creatEvent.description) {
             subject.description = creatEvent.description
