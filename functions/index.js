@@ -31,8 +31,8 @@ exports.publishSubjectCreatedEvent = functions.pubsub.topic('created-subject-eve
             title: creatEvent.title,
             status: creatEvent.status,
             creationDate: new Date(creatEvent._ts),
-            schedules : creatEvent.schedules,
-            subjectType : creatEvent.subjectType
+            schedules: creatEvent.schedules,
+            subjectType: creatEvent.subjectType
         }
         if (creatEvent.description) {
             subject.description = creatEvent.description
@@ -97,6 +97,6 @@ exports.publishSubjectTypeChangedEvent = functions.pubsub.topic('type-changed-su
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({subjectType = event.subjectType , updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({subjectType: event.subjectType , updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
