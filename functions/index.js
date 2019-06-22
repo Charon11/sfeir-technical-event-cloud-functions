@@ -41,7 +41,7 @@ exports.publishSubjectDeletedEvent = functions.pubsub.topic('deleted-subject-eve
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, updatedDate: new Date(event._ts), deletedBy: user.data }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, updatedDate: new Date(event._ts), deletedBy: user.data() }).then();
     })
 
 })
@@ -50,7 +50,7 @@ exports.publishSubjectAcceptedEvent = functions.pubsub.topic('accepted-subject-e
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, acceptedBy: user.data, scheduleDate: event.scheduleDate, updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, acceptedBy: user.data(), scheduleDate: event.scheduleDate, updatedDate: new Date(event._ts) }).then();
     })
 })
 
@@ -58,7 +58,7 @@ exports.publishSubjectRefusedEvent = functions.pubsub.topic('refused-subject-eve
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, refusedBy: user.data, updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ status: event.status, refusedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
 
@@ -66,7 +66,7 @@ exports.publishSubjectDescriptionChangedEvent = functions.pubsub.topic('descript
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ description: event.description, updatedBy: user.data, updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ description: event.description, updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
 
@@ -74,7 +74,7 @@ exports.publishSubjectTitleChangedEvent = functions.pubsub.topic('title-changed-
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ title: event.title, updatedBy: user.data, updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ title: event.title, updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
 
@@ -82,6 +82,6 @@ exports.publishSubjectSchedulesChangedEvent = functions.pubsub.topic('schedules-
     const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
-        return admin.firestore().collection('subject').doc(event.entityId).update({ schedules: event.schedules.map(s => new Date(s)), updatedBy: user.data, updatedDate: new Date(event._ts) }).then();
+        return admin.firestore().collection('subject').doc(event.entityId).update({ schedules: event.schedules.map(s => new Date(s)), updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
