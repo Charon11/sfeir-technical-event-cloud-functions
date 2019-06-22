@@ -26,7 +26,14 @@ exports.publishSubjectCreatedEvent = functions.pubsub.topic('created-subject-eve
     console.log(data);
     const creatEvent = JSON.parse(data)
     return admin.firestore().collection('users').doc(creatEvent.userId).get().then(user => {
-        const subject = { id: creatEvent.entityId, title: creatEvent.title, status: creatEvent.status, creationDate: new Date(creatEvent._ts) }
+        const subject = { 
+            id: creatEvent.entityId,
+            title: creatEvent.title,
+            status: creatEvent.status,
+            creationDate: new Date(creatEvent._ts),
+            schedules = creatEvent.schedules,
+            subjectType = creatEvent.subjectType
+        }
         if (creatEvent.description) {
             subject.description = creatEvent.description
         }
@@ -83,5 +90,13 @@ exports.publishSubjectSchedulesChangedEvent = functions.pubsub.topic('schedules-
     const event = JSON.parse(data)
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
         return admin.firestore().collection('subject').doc(event.entityId).update({ schedules: event.schedules.map(s => new Date(s)), updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
+    })
+})
+
+exports.publishSubjectTypeChangedEvent = functions.pubsub.topic('type-changed-subject-events').onPublish(message => {
+    const data = message.data ? Buffer.from(message.data, 'base64').toString() : '{"result":"no data"}';
+    const event = JSON.parse(data)
+    return admin.firestore().collection('users').doc(event.userId).get().then(user => {
+        return admin.firestore().collection('subject').doc(event.entityId).update({subjectType = event.subjectType , updatedBy: user.data(), updatedDate: new Date(event._ts) }).then();
     })
 })
