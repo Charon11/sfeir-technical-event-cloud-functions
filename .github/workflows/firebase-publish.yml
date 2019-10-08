@@ -1,0 +1,29 @@
+name: Publish Firebase Functions
+
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  publish:
+    name : Publish
+    runs-on: ubuntu-latest
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 0
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        version: 10.x
+    - name: Install functions dependencies
+      run: npm --prefix ./functions ci
+    - name: Deploy Firebase Functions
+      uses: pizzafox/firebase-action@master
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        PROJECT_ID: sfeirluxtechnicalevent
+      with:
+        args: deploy --only functions
