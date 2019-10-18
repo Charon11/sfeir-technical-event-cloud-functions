@@ -34,6 +34,7 @@ exports.eventAccepted = functions.pubsub.topic('accepted-subject-events').onPubl
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
         const email = user.data().email
         return admin.firestore().collection('subject').doc(event.entityId).get().then(doc => {
+            const schedule = new Date(Date.parse(doc.data().scheduleDate)).toLocaleDateString("fr-FR")
             return admin.firestore().collection('mail').doc().set(
                 {
                     to : [email], 
@@ -42,7 +43,7 @@ exports.eventAccepted = functions.pubsub.topic('accepted-subject-events').onPubl
                         name : 'event-accepted',
                         data : {
                             title : doc.data().title,
-                            date : doc.data().scheduleDate.toLocaleDateString("fr-FR")
+                            date : schedule
                         }
                     }
                 }
