@@ -42,7 +42,7 @@ exports.eventAccepted = functions.pubsub.topic('accepted-subject-events').onPubl
                         name : 'event-accepted',
                         data : {
                             title : doc.data().title,
-                            date : doc.data().scheduleDate
+                            date : doc.data().scheduleDate.toLocaleDateString("fr-FR")
                         }
                     }
                 }
