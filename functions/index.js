@@ -34,16 +34,20 @@ exports.eventAccepted = functions.pubsub.topic('accepted-subject-events').onPubl
     return admin.firestore().collection('users').doc(event.userId).get().then(user => {
         const email = user.data().email
         return admin.firestore().collection('subject').doc(event.entityId).get().then(doc => {
-            const schedule = new Date(Date.parse(doc.data().scheduleDate)).toLocaleDateString("fr-FR")
+
+            console.log(event);
+            console.log(event.scheduleDate);
+            const schedule = new Date(Date.parse(event.scheduleDate)).toLocaleDateString("fr-FR");
+            console.log(schedule);
             return admin.firestore().collection('mail').doc().set(
                 {
-                    to : [email], 
+                    to: [email],
                     cc : ['chardin.r@sfeir.com, bodeving.l@sfeir.com, homberg.g@sfeir.com'],
-                    template : {
-                        name : 'event-accepted',
-                        data : {
-                            title : doc.data().title,
-                            date : schedule
+                    template: {
+                        name: 'event-accepted',
+                        data: {
+                            title: doc.data().title,
+                            date: schedule
                         }
                     }
                 }
@@ -74,12 +78,12 @@ exports.eventCreated = functions.pubsub.topic('created-subject-events').onPublis
         console.log(subject)
         return admin.firestore().collection('mail').doc().set(
             {
-                to : ['chardin.r@sfeir.com, bodeving.l@sfeir.com, homberg.g@sfeir.com'],
-                template : {
-                    name : 'event-created',
-                    data : {
-                        username : user.data().displayName,
-                        title : subject.title,
+                to: ['chardin.r@sfeir.com, bodeving.l@sfeir.com, homberg.g@sfeir.com'],
+                template: {
+                    name: 'event-created',
+                    data: {
+                        username: user.data().displayName,
+                        title: subject.title,
                         type: subject.subjectType,
                         description: subject.description ? subject.description : 'No description'
                     }
